@@ -1,8 +1,32 @@
 ##20190723 charp 1
-常用python库：
+一、常用python库：
   numpy 
     快速高效的多维数组对象ndarray。
     用于对数组执行元素级计算以及直接对数组执行数学运算的函数。
     用于读写硬盘上基于数组的数据集的工具。
     线性代数运算、傅里叶变换，以及随机数生成。
-    成熟的C API， 用于Python插件和原生C、C++、Fortran代码访问NumPy的数据结构和计算工具。
+  pandas
+    有标签轴的数据结构，支持自动或清晰的数据对齐。这可以防止由于数据不对齐，或处理来源不同的索引不同的数据，所造成的错误。
+    集成时间序列功能。
+    相同的数据结构用于处理时间序列数据和非时间序列数据。
+    保存元数据的算术运算和压缩。
+    灵活处理缺失数据。
+    合并和其它流行数据库（例如基于SQL的数据库）的关系操作。
+  matplotlib
+    是最流行的用于绘制图表和其它二维数据可视化的Python库。
+  SciPy
+    一组专门解决科学计算中各种标准问题域的包的集合
+  scikit-learn
+    Python的通用机器学习工具包
+  statsmodels
+    statsmodels包含经典统计学和经济计量学的算法。statsmodels更关注与统计推断，提供不确定估计和参数p-值。相反的，scikit-learn注重预测。
+二、python安装
+  Windows 安装anaconda
+  
+三、引入惯例
+  import numpy as np
+  import matplotlib.pyplot as plt
+  import pandas as pd 
+  import seaborn as sns
+  import statsmodels as sm
+  
