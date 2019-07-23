@@ -1,0 +1,57 @@
+##20190723 chapter 2 
+一、ipython 和 jupyter notebooks
+    jupyter用法：
+    1、输入文件名开头之后单击<Tab>,列表列出所有相关变量
+    2、输入变量.<Tab>,列出所有方法
+    3、变量和函数后面加？显示变量类型和函数帮助,自定义函数会显示'''之间的注释。加？？显示源码
+    4、在Jupyter notebook中，你也可以使用%load，它将脚本导入到一个代码格中
+    
+    ipython用法：
+    1、?字符与通配符结合可以匹配所有的名字
+        In [13]: np.*load*?
+        np.__loader__
+        np.load
+        np.loads
+        np.loadtxt
+        np.pkgload
+    2、%run命令   
+    3、%paste可以直接运行剪贴板中的代码，使用%cpaste，你可以粘贴任意多的代码再运行。你可能想在运行前，先看看代码。如果粘贴了错误的代码，可以用Ctrl-C中断。
+    魔术命令：
+    1、%timeit 
+    2、%quickref
+    等等
+二、python语法
+    *使用缩进来标记代码块
+    *万物皆对象
+    *注释#和''' '''
+    *=号实际上是引用的意思，a=b，说明a，b指向同一个内存地址，修改a时候b也响应的修改
+    *Python被认为是强类型化语言，意味着每个对象都有明确的类型（或类），默许转换只会发生在特定的情况下:int 转float。isinstance函数检查对象是某个类型的实例isinstance可以用类型元组，检查对象的类型是否在元组中
+    *引入：
+    1、import some_module
+    2、from some_module import f, g, PI
+    3、import some_module as sm
+    4、from some_module import PI as pi, g as gf
+    *要判断两个引用是否指向同一个对象，可以使用is方法。is not可以判断两个对象是不同的：
+    In [35]: a = [1, 2, 3]
+    In [36]: b = a
+    In [37]: c = list(a)
+    In [38]: a is b
+    Out[38]: True
+    In [39]: a is not c
+    Out[39]: True
+    因为list总是创建一个新的Python列表（即复制），我们可以断定c是不同于a的。使用is比较与==运算符不同，如下：
+    In [40]: a == c
+    Out[40]: True
+    is和is not常用来判断一个变量是否为None，因为只有一个None的实例：
+    In [41]: a = None
+    In [42]: a is None
+    Out[42]: True
+    *可变与不可变对象
+    Python中的大多数对象，比如列表、字典、NumPy数组，和用户定义的类型（类），都是可变的。
+    字符串和元组，是不可变的
+    Python的字符串是不可变的，不能修改字符串
+    *None 类型
+    None不仅是一个保留字，还是唯一的NoneType的实例
+    *三元表达式
+    Python中的三元表达式可以将if-else语句放到一行里。语法如下：
+    value = true-expr if condition else false-expr 
