@@ -18,3 +18,4 @@ Zookeeper 一个最常用的使用场景就是用于担任服务生产者和服�
 
 服务生产者将自己提供的服务注册到Zookeeper中心，服务的消费者在进行服务调用的时候先到Zookeeper中查找服务，获取到服务生产者的详细信息之后，再去调用服务生产者的内容与数据。如下图所示，在 Dubbo架构中 Zookeeper 就担任了注册中心这一角色。
 
+https://github.com/jiaming9844/hello-world/blob/master/zookeeper/img/1063359856-5b973176b0f9c_articlex.png
