@@ -11,7 +11,7 @@
 
 - Zookeeper 是 Hadoop 生态系统的一员；
 
-* 构建 Zookeeper 集群的时候，使用的服务器最好是奇数台。
+** 构建 Zookeeper 集群的时候，使用的服务器最好是奇数台。**
 
 ZooKeeper 概览：
 
