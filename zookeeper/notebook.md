@@ -1,4 +1,4 @@
-##什么是zookeeper？
+#什么是zookeeper？
 
 简单描述：
 
@@ -21,7 +21,7 @@ Zookeeper 一个最常用的使用场景就是用于担任服务生产者和服�
 
 <img src="https://github.com/jiaming9844/hello-world/blob/master/zookeeper/img/1063359856-5b973176b0f9c_articlex.png"/>
 
-##重要概念总结
+#重要概念总结
 
 ZooKeeper 本身就是一个分布式程序（只要半数以上节点存活，ZooKeeper 就能正常服务）。
 
