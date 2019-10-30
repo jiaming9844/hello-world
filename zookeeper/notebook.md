@@ -40,7 +40,7 @@ ZooKeeper 底层其实只提供了两个功能：①管理（存储、读取）�
 1、目前有三台服务器分别为58.2.219.231，58.2.219.232，58.2.219.233。下载并解压 zookeeper-3.4.10.tar.gz 
 2、将conf目录下zoo_sample.cfg配置文件修改为zoo.conf。
 3、修改zoo.conf。
-
+````
 # The number of milliseconds of each tick
 tickTime=2000
 # The number of ticks that the initial
@@ -75,4 +75,4 @@ clientPort=2181
 server.1=58.2.219.233:2888:3888
 server.2=58.2.219.232:2888:3888
 server.3=58.2.219.231:2888:3888
-bash
+````
