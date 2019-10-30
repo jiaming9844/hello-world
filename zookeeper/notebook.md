@@ -142,3 +142,24 @@ server.3=58.2.219.231:2888:3888
     zkServer.sh status
 　　我们分别对集群三台机器执行启动命令。执行完毕后，分别查看集群节点状态：
   <img src="https://github.com/jiaming9844/hello-world/blob/master/zookeeper/img/1120165-20181027125808915-966913713.png"/>
+  
+  
+  7、搭建问题
+  
+  　如果没有出现上面的状态，说明搭建过程出了问题，那么解决问题的首先就是查看日志文件：
+
+　　zookeeper 日志文件目录在：
+
+　　dataDir 配置的目录下，文件名称为：zookeeper.out。通过查看日志来解决相应的问题。下面是两种常见的问题：
+
+　　①、防火墙为关闭
+
+　　查看防火墙状态：
+
+    service iptables status
+　　关闭防火墙：
+
+    chkconfig iptables off
+　　②、dataDir 配置的目录没有创建
+
+　　在 zoo.cfg 文件中，会有对 dataDir 的一项配置，需要创建该目录，并且注意要在该目录下创建 myid 文件，里面的配置和 zoo.cfg 的server.x 配置保持一致
