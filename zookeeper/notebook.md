@@ -141,4 +141,4 @@ server.3=58.2.219.231:2888:3888
 
     zkServer.sh status
 　　我们分别对集群三台机器执行启动命令。执行完毕后，分别查看集群节点状态：
-  <img https://github.com/jiaming9844/hello-world/blob/master/zookeeper/img/1120165-20181027125808915-966913713.png>
+  <img src="https://github.com/jiaming9844/hello-world/blob/master/zookeeper/img/1120165-20181027125808915-966913713.png"/>
