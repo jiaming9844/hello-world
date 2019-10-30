@@ -38,13 +38,13 @@ ZooKeeper 底层其实只提供了两个功能：①管理（存储、读取）�
 
 #zookeeper 集群环境搭建
 
-1、目前有三台服务器分别为58.2.219.231，58.2.219.232，58.2.219.233。下载并解压 zookeeper-3.4.10.tar.gz 
+1、目前有三台服务器分别为58.2.219.231，58.2.219.232，58.2.219.233。下载并解压 zookeeper-3.4.10.tar.gz （jdk已安装）
 
 2、将conf目录下zoo_sample.cfg配置文件修改为zoo.conf。
 
 3、修改zoo.conf。
 
-````bash
+````
 # The number of milliseconds of each tick
 tickTime=2000
 # The number of ticks that the initial
@@ -80,3 +80,48 @@ server.1=58.2.219.233:2888:3888
 server.2=58.2.219.232:2888:3888
 server.3=58.2.219.231:2888:3888
 ````
+　　①、tickTime：基本事件单元，这个时间是作为Zookeeper服务器之间或客户端与服务器之间维持心跳的时间间隔，每隔tickTime时间就会发送一个心跳；最小 的session过期时间为2倍tickTime
+
+　　②、dataDir：存储内存中数据库快照的位置，除非另有说明，否则指向数据库更新的事务日志。注意：应该谨慎的选择日志存放的位置，使用专用的日志存储设备能够大大提高系统的性能，如果将日志存储在比较繁忙的存储设备上，那么将会很大程度上影像系统性能。
+
+　　③、client：监听客户端连接的端口。
+
+　　④、initLimit：允许follower连接并同步到Leader的初始化连接时间，以tickTime为单位。当初始化连接时间超过该值，则表示连接失败。
+
+　　⑤、syncLimit：表示Leader与Follower之间发送消息时，请求和应答时间长度。如果follower在设置时间内不能与leader通信，那么此follower将会被丢弃。
+
+　　⑥、server.A=B:C:D
+
+　　　　A：其中 A 是一个数字，表示这个是服务器的编号；
+
+　　　　B：是这个服务器的 ip 地址；
+
+　　　　C：Leader选举的端口；
+
+　　　　D：Zookeeper服务器之间的通信端口。
+
+　　我们需要修改的第一个是 dataDir ,在指定的位置处创建好目录。
+
+　　第二个需要新增的是 server.A=B:C:D 配置，其中 A 对应下面我们即将介绍的myid 文件。B是集群的各个IP地址，C:D 是端口配置。
+
+4、创建myid文件，然后在该文件添加上一步 server 配置的对应 A 数字。
+　　下面配置是：
+    server.1=58.2.219.233:2888:3888
+    server.2=58.2.219.232:2888:3888
+    server.3=58.2.219.231:2888:3888
+　　那么就必须在 58.2.219.233 机器的的 dataDir 目录下创建 myid 文件，然后在该文件中写上 1 即可。同理232机器myid为2。
+  
+5、配置环境变量
+
+　　为了能够在任意目录启动zookeeper集群，我们需要配置环境变量。
+
+　　ps:你也可以不配，这不是搭建集群的必要操作，只不过如果你不配置环境变量，那么每次启动zookeeper需要到安装文件的 bin 目录下去启动。
+
+　　首先进入到 /etc/profile 目录，添加相应的配置信息：
+
+    #set zookeeper environment
+    export ZK_HOME=/usr/local/software/zookeeper-3.3.6
+    export PATH=$PATH:$ZK_HOME/bin
+　　然后通过如下命令使得环境变量生效：
+
+    source /etc/profle
