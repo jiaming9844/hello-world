@@ -34,3 +34,45 @@ ZooKeeper 是高性能的。 在“读”多于“写”的应用程序中尤其
 ZooKeeper有临时节点的概念。 当创建临时节点的客户端会话一直保持活动，瞬时节点就一直存在。而当会话终结时，瞬时节点被删除。持久节点是指一旦这个ZNode被创建了，除非主动进行ZNode的移除操作，否则这个ZNode将一直保存在Zookeeper上。
 
 ZooKeeper 底层其实只提供了两个功能：①管理（存储、读取）用户程序提交的数据；②为用户程序提交数据节点监听服务。
+
+
+#zookeeper 集群环境搭建
+1、目前有三台服务器分别为58.2.219.231，58.2.219.232，58.2.219.233。下载并解压 zookeeper-3.4.10.tar.gz 
+2、将conf目录下zoo_sample.cfg配置文件修改为zoo.conf。
+3、修改zoo.conf。
+
+# The number of milliseconds of each tick
+tickTime=2000
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit=10
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit=5
+# the directory where the snapshot is stored.
+# do not use /tmp for storage, /tmp here is just
+# example sakes.
+#修改这部分路径，修改之前必须新建好相应的文件夹。（环境变量的方式不好用，以后再尝试）
+dataDir=/usr/local/druid/apache-druid-0.16.0-incubating/zk/data
+# the port at which the clients will connect
+clientPort=2181
+# the maximum number of client connections.
+# increase this if you need to handle more clients
+#maxClientCnxns=60
+#
+# Be sure to read the maintenance section of the
+# administrator guide before turning on autopurge.
+#
+# http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance
+#
+# The number of snapshots to retain in dataDir
+#autopurge.snapRetainCount=3
+# Purge task interval in hours
+# Set to "0" to disable auto purge feature
+#autopurge.purgeInterval=1
+
+#新加三台服务器信息
+server.1=58.2.219.233:2888:3888
+server.2=58.2.219.232:2888:3888
+server.3=58.2.219.231:2888:3888
+bash
