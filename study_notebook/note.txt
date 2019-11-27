@@ -1,0 +1,4 @@
+spendcube介绍：
+Spend Cube is a  analytical tool for purchasing spend, which aims to standardize, unify and share the data of purchasing data from Haier companies all over the world to improve the business efficiency with transparency. 
+ 
+This tool shows the spend of each material category with standard global category and multiple dimension like company, country  and  production line. Help to identify the opportunities for material/vendor centralization, find the most valuable and strategic suppliers to develop both short & long-term sourcing strategies. 
