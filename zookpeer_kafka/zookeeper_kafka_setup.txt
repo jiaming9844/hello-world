@@ -199,3 +199,8 @@ bin/kafka-server-start.sh config/server.properties &
 
 bin/kafka-server-stop.sh
 至此Zookeeper+Kafka集群配置成功.
+
+
+
+########注意##########
+1、如果修改了brokerid那么要清除掉log.dirs=/tmp/kafka-logs 下的所有文件。
