@@ -1,1 +1,201 @@
-Zookeeper+Kafka集群部署
+Zookeeper+Kafka集群部署（转）
+主机规划：
+
+10.200.3.85  　　Kafka+ZooKeeper
+
+10.200.3.86  　　Kafka+ZooKeeper
+
+10.200.3.87 　　 Kafka+ZooKeeper
+
+软件下载地址：
+
+#wget http://mirrors.hust.edu.cn/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+#wget http://mirror.bit.edu.cn/apache/kafka/1.1.0/kafka_2.12-1.1.0.tgz
+三台主机hosts文件一致：
+
+# cat /etc/hosts
+10.200.3.85 ZooKeeper-Kafka-01 
+10.200.3.86 ZooKeeper-Kafka-02
+10.200.3.87 ZooKeeper-Kafka-03
+一、安装zookeeper
+
+1.在master节点上操作：
+
+复制代码
+[root@ZooKeeper-Kafka-01 src]# tar -zxvf zookeeper-3.4.10.tar.gz -C /usr/local/
+[root@ZooKeeper-Kafka-01 src]# cd ..
+[root@ZooKeeper-Kafka-01 local]# ln -s zookeeper-3.4.10 zookeeper
+[root@ZooKeeper-Kafka-01 local]# cd zookeeper/conf/
+[root@ZooKeeper-Kafka-01 conf]# cp zoo_sample.cfg zoo.cfg
+tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/tmp/zookeeper
+clientPort=2181
+server.1=ZooKeeper-Kafka-01:2888:3888
+server.2=ZooKeeper-Kafka-02:2888:3888
+server.3=ZooKeeper-Kafka-03:2888:3888
+复制代码
+2.创建dataDir目录创建/tmp/zookeeper
+
+# 在master节点上
+
+[root@ZooKeeper-Kafka-01 conf]# mkdir /tmp/zookeeper
+[root@ZooKeeper-Kafka-01 conf]# touch /tmp/zookeeper/myid
+[root@ZooKeeper-Kafka-01 conf]# echo 1 > /tmp/zookeeper/myid
+3.将zookeeper文件复制到另外两个节点：
+
+[root@ZooKeeper-Kafka-01 local]# scp -r zookeeper-3.4.10/ 10.200.3.86:/usr/local/
+[root@ZooKeeper-Kafka-01 local]# scp -r zookeeper-3.4.10/ 10.200.3.87:/usr/local/
+4.在两个slave节点创建目录和文件
+
+#ZooKeeper-Kafka-02节点:
+
+[root@ZooKeeper-Kafka-02 local]# ln -s zookeeper-3.4.10 zookeeper
+[root@ZooKeeper-Kafka-02 local]# mkdir /tmp/zookeeper
+[root@ZooKeeper-Kafka-02 local]# touch /tmp/zookeeper/myid
+[root@ZooKeeper-Kafka-02 local]# echo 2 > /tmp/zookeeper/myid
+#ZooKeeper-Kafka-03节点
+
+[root@ZooKeeper-Kafka-03 local]# ln -s zookeeper-3.4.10 zookeeper
+[root@ZooKeeper-Kafka-03 local]# mkdir /tmp/zookeeper
+[root@ZooKeeper-Kafka-03 local]# touch /tmp/zookeeper/myid
+[root@ZooKeeper-Kafka-03 local]# echo 3 > /tmp/zookeeper/myid
+5.分别在每个节点上启动 zookeeper测试：
+
+[root@ZooKeeper-Kafka-01 zookeeper]# ./bin/zkServer.sh start
+[root@ZooKeeper-Kafka-02 zookeeper]# ./bin/zkServer.sh start
+[root@ZooKeeper-Kafka-03 zookeeper]# ./bin/zkServer.sh start
+
+6.查看状态：
+
+复制代码
+[root@ZooKeeper-Kafka-01 zookeeper]# ./bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /usr/local/zookeeper/bin/../conf/zoo.cfg
+Mode: follower
+[root@ZooKeeper-Kafka-02 zookeeper]# ./bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /usr/local/zookeeper/bin/../conf/zoo.cfg
+Mode: leader
+[root@ZooKeeper-Kafka-03 zookeeper]# ./bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /usr/local/zookeeper/bin/../conf/zoo.cfg
+Mode: follower
+复制代码
+至此zookeeper集群安装成功！！！
+
+
+## Kafka集群安装配置
+
+1.安装：
+
+[root@ZooKeeper-Kafka-01 src]# tar -zxvf kafka_2.12-1.1.0.tgz -C /usr/local/
+[root@ZooKeeper-Kafka-01 src]# cd ..
+[root@ZooKeeper-Kafka-01 local]# ln -s kafka_2.12-1.1.0 kafka
+2.修改server.properties文件
+
+复制代码
+# master为0
+broker.id=0
+listeners=PLAINTEXT://ZooKeeper-Kafka-01:9092
+advertised.listeners=PLAINTEXT://ZooKeeper-Kafka-01:9092
+num.network.threads=3
+num.io.threads=8
+socket.send.buffer.bytes=102400
+socket.receive.buffer.bytes=102400
+socket.request.max.bytes=104857600
+log.dirs=/tmp/kafka-logs
+num.partitions=5
+num.recovery.threads.per.data.dir=1
+offsets.topic.replication.factor=1
+transaction.state.log.replication.factor=1
+transaction.state.log.min.isr=1
+log.retention.hours=24
+log.segment.bytes=1073741824
+log.retention.check.interval.ms=300000
+# 连接
+zookeeper.connect=ZooKeeper-Kafka-01:2181,ZooKeeper-Kafka-02:2181,ZooKeeper-Kafka-03:2181
+zookeeper.connection.timeout.ms=6000
+group.initial.rebalance.delay.ms=0
+# 可删除topic
+delete.topic.enable=true
+复制代码
+3.将 kafka_2.12-1.1.0 文件夹复制到另外两个节点下
+
+[root@ZooKeeper-Kafka-01 local]# scp -r kafka_2.12-1.1.0/ 10.200.3.86:/usr/local/
+[root@ZooKeeper-Kafka-01 local]# scp -r kafka_2.12-1.1.0/ 10.200.3.87:/usr/local/
+并修改每个节点对应的 server.properties 文件的 broker.id和listenrs：
+
+复制代码
+[root@ZooKeeper-Kafka-02 config]# cat server.properties 
+broker.id=1
+listeners=PLAINTEXT://ZooKeeper-Kafka-02:9092
+advertised.listeners=PLAINTEXT://ZooKeeper-Kafka-02:9092
+
+[root@ZooKeeper-Kafka-03 config]# cat server.properties
+broker.id=2
+listeners=PLAINTEXT://ZooKeeper-Kafka-03:9092
+advertised.listeners=PLAINTEXT://ZooKeeper-Kafka-03:9092
+复制代码
+4.启动服务
+
+bin/kafka-server-start.sh config/server.properties &
+Zookeeper+Kafka集群测试
+
+创建topic：
+
+[root@ZooKeeper-Kafka-01 kafka]# bin/kafka-topics.sh --create --zookeeper ZooKeeper-Kafka-01:2181, ZooKeeper-Kafka-02:2181, ZooKeeper-Kafka-03:2181 --replication-factor 3 --partitions 3 --topic test
+显示topic：
+
+[root@ZooKeeper-Kafka-01 kafka]# bin/kafka-topics.sh --describe --zookeeper ZooKeeper-Kafka-01:2181, ZooKeeper-Kafka-02:2181, ZooKeeper-Kafka-03:2181 --topic test
+列出topic：
+
+[root@ZooKeeper-Kafka-01 kafka]# bin/kafka-topics.sh --list --zookeeper ZooKeeper-Kafka-01:2181, ZooKeeper-Kafka-02:2181, ZooKeeper-Kafka-03:2181
+test
+创建 producer(生产者);
+
+# 在master节点上 测试生产消息
+
+复制代码
+[root@ZooKeeper-Kafka-01 kafka]# bin/kafka-console-producer.sh --broker-list ZooKeeper-Kafka-01:9092 -topic test
+>hello world
+>[2018-04-03 12:18:25,545] INFO Updated PartitionLeaderEpoch. New: {epoch:0, offset:0}, Current: {epoch:-1, offset:-1} for Partition: test-0. Cache now contains 0 entries. (kafka.server.epoch.LeaderEpochFileCache)
+this is example ...
+>[2018-04-03 12:19:16,342] INFO Updated PartitionLeaderEpoch. New: {epoch:0, offset:0}, Current: {epoch:-1, offset:-1} for Partition: test-2. Cache now contains 0 entries. (kafka.server.epoch.LeaderEpochFileCache)
+welcome to china
+>[2018-04-03 12:20:53,141] INFO Updated PartitionLeaderEpoch. New: {epoch:0, offset:0}, Current: {epoch:-1, offset:-1} for Partition: test-1. Cache now contains 0 entries. (kafka.server.epoch.LeaderEpochFileCache)
+复制代码
+创建 consumer(消费者):
+
+# 在ZooKeeper-Kafka-02节点上 测试消费
+
+复制代码
+[root@ZooKeeper-Kafka-02 kafka]# bin/kafka-console-consumer.sh --zookeeper ZooKeeper-Kafka-01:2181, ZooKeeper-Kafka-02:2181, ZooKeeper-Kafka-03:2181 -topic test --from-beginning
+Using the ConsoleConsumer with old consumer is deprecated and will be removed in a future major release. Consider using the new consumer by passing [bootstrap-server] instead of [zookeeper].
+this is example ...
+hello world
+[2018-04-03 12:20:53,145] INFO Updated PartitionLeaderEpoch. New: {epoch:0, offset:0}, Current: {epoch:-1, offset:-1} for Partition: test-1. Cache now contains 0 entries. (kafka.server.epoch.LeaderEpochFileCache)
+welcome to china
+复制代码
+#在ZooKeeper-Kafka-03节点上 测试消费
+
+复制代码
+[root@ZooKeeper-Kafka-03 kafka]# bin/kafka-console-consumer.sh --zookeeper ZooKeeper-Kafka-01:2181, ZooKeeper-Kafka-02:2181, ZooKeeper-Kafka-03:2181 -topic test --from-beginning
+Using the ConsoleConsumer with old consumer is deprecated and will be removed in a future major release. Consider using the new consumer by passing [bootstrap-server] instead of [zookeeper].
+welcome to china
+hello world
+this is example ...
+复制代码
+然后在 producer 里输入消息，consumer 中就会显示出同样的内容，表示消费成功
+
+删除 topic 和关闭服务
+
+[root@ZooKeeper-Kafka-01 kafka]# bin/kafka-topics.sh --delete --zookeeper ZooKeeper-Kafka-01:2181, ZooKeeper-Kafka-02:2181, ZooKeeper-Kafka-03:2181 --topic test
+启动服务:
+
+bin/kafka-server-start.sh config/server.properties &
+停止服务：
+
+bin/kafka-server-stop.sh
+至此Zookeeper+Kafka集群配置成功.
